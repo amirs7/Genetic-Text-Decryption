@@ -15,6 +15,7 @@ public class Genetic  {
     ArrayList<Chromosome> generation;
     Integer currentGeneration;
     private Integer bestScore = -1;
+    private Integer bestScoreIndex = -1;
     public Genetic(String encryptedTextPath,String fitnessWeightsPath,String alphabet,
                    Integer generationSize,Integer crossoverProbability,Integer mutationProbability){
         this.crossoverProbability = crossoverProbability;
@@ -44,12 +45,15 @@ public class Genetic  {
         Chromosome c = generation.get(index);
         return fitnessFunction.decrypt(c);
     }
-
+    public void addChromosome(String permutation){
+        Chromosome newChromosome = new Chromosome(permutation);
+        generation.add(newChromosome);
+    }
     public String decrypt(){
-//        Chromosome c = getBestChromosome();
+///        Chromosome c = getBestChromosome();
 //        if(c!=null)
-//            return fitnessFunction.decrypt(c);
-        return null;
+        return fitnessFunction.decrypt(generation.get(bestScoreIndex));
+//        return null;
     }
     public Integer getScore(){
         return  bestScore;
@@ -59,8 +63,10 @@ public class Genetic  {
         Integer maxScore = -1;
         for (Chromosome c: generation) {
             Integer s = fitnessFunction.evaluateChromosome(c);
-            if(maxScore <= s)
+            if(maxScore <= s) {
+                bestScoreIndex = generation.indexOf(c);
                 maxScore = s;
+            }
         }
         bestScore = maxScore;
         for (int i = 0; i < generation.size()/2 ; i++) {
